@@ -14,14 +14,39 @@
 class YiiPHPExcel extends PHPExcel {
 
     /**
+     * The row number in excel from where to start writing the data.
+     * Default: 1, first line.
+     * @var int
+     */
+    private $_startRowNumber = 1;
+
+    /**
      * PHPExcel Settings here
      */
-    public function __construct() {
+    public function __construct($startRowNumber = 1) {
         parent::__construct();
         //Use only one sheet
         $this->setActiveSheetIndex(0);
+        //Set start row
+        $this->setStartRowNumber($startRowNumber);
     }
 
+    /**
+     * Will set the start row number
+     * @param integer $startFromRow
+     */
+    public function setStartRowNumber($startRowNumber) {
+        $this->_startRowNumber = $startRowNumber;
+    }
+
+    /**
+     * Will get the start row number
+     * @return integer
+     */
+    public function getStartRowNumber() {
+        return $this->_startRowNumber;
+    }
+    
     /**
      * Will construct PHPExcel. You can specify attributes, methods and relations in array of attributes.
      *
@@ -72,7 +97,7 @@ class YiiPHPExcel extends PHPExcel {
      * @param array $letters
      */
     private function setRows($models, $attributes, $letters) {
-        $rownum = 2; //start from second row
+        $rownum = $this->getStartRowNumber() + 1; //start from the next row
         $counter = 0;
         foreach ($models as $model) {
             foreach ($attributes as $attribute) {
@@ -128,7 +153,7 @@ class YiiPHPExcel extends PHPExcel {
         $counter = 0;
         foreach ($attributes as $attribute) {
             $label = is_array($attribute) ? current($attribute) : $models[0]->getAttributeLabel($attribute);
-            $this->getActiveSheet()->setCellValue($letters[$counter] . '1', $label)
+            $this->getActiveSheet()->setCellValue($letters[$counter] . $this->getStartRowNumber(), $label)
                     ->getStyle($letters[$counter] . '1')->getFont()->setBold(true);
             $counter++;
         }
