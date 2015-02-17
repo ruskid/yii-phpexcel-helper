@@ -23,12 +23,10 @@ class YiiPHPExcel extends PHPExcel {
     /**
      * PHPExcel Settings here
      */
-    public function __construct($startRowNumber = 1) {
+    public function __construct() {
         parent::__construct();
         //Use only one sheet
         $this->setActiveSheetIndex(0);
-        //Set start row
-        $this->setStartRowNumber($startRowNumber);
     }
 
     /**
@@ -71,7 +69,6 @@ class YiiPHPExcel extends PHPExcel {
         $letters = $this->getLetters($attributes);
         $this->setFirstRow($models, $attributes, $letters);
         $this->setRows($models, $attributes, $letters);
-        $this->sendToBrowser();
     }
 
     /**
@@ -110,6 +107,8 @@ class YiiPHPExcel extends PHPExcel {
             $counter = 0;
             $rownum++;
         }
+        //After writing the data into excel, set the next start row number.
+        $this->setStartRowNumber( ++$rownum);
     }
 
     /**
@@ -154,7 +153,7 @@ class YiiPHPExcel extends PHPExcel {
         foreach ($attributes as $attribute) {
             $label = is_array($attribute) ? current($attribute) : $models[0]->getAttributeLabel($attribute);
             $this->getActiveSheet()->setCellValue($letters[$counter] . $this->getStartRowNumber(), $label)
-                    ->getStyle($letters[$counter] . '1')->getFont()->setBold(true);
+                    ->getStyle($letters[$counter] . $this->getStartRowNumber())->getFont()->setBold(true);
             $counter++;
         }
     }
