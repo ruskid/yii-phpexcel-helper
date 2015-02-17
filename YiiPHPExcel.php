@@ -65,7 +65,7 @@ class YiiPHPExcel extends PHPExcel {
      * @param array $attributes Array of attributes, methods and relations.
      * @return will return file to browser
      */
-    public function createExcel($models, $attributes) {
+    public function writeRecordsToExcel($models, $attributes) {
         $letters = $this->getLetters($attributes);
         $this->setFirstRow($models, $attributes, $letters);
         $this->setRows($models, $attributes, $letters);
@@ -161,7 +161,7 @@ class YiiPHPExcel extends PHPExcel {
     /**
      * Will send the constructed excel to browser and end yii application
      */
-    private function sendToBrowser() {
+    public function sendToBrowser() {
         // ** Redirect output to a client’s web browser (Excel2007)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="gpd.xlsx"');
