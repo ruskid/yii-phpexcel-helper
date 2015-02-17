@@ -66,9 +66,11 @@ class YiiPHPExcel extends PHPExcel {
      * @return will return file to browser
      */
     public function writeRecordsToExcel($models, $attributes) {
-        $letters = $this->getLetters($attributes);
-        $this->setFirstRow($models, $attributes, $letters);
-        $this->setRows($models, $attributes, $letters);
+        if ($models && $attributes) {
+            $letters = $this->getLetters($attributes);
+            $this->setFirstRow($models, $attributes, $letters);
+            $this->setRows($models, $attributes, $letters);
+        }
     }
 
     /**
