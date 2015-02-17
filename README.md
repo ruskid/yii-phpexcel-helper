@@ -11,21 +11,49 @@ YiiPHPExcel is extended by PHPExcel, so you have to download PHPExcel to your ex
 ),
 ```
 
-If label wasn't specified it will take getAttributeLabel of the Active Record as an excel column header.
+If label wasn't specified it will take getAttributeLabel of the Active Record as an excel column header. You can rewrite sendToBrowser method for excel extension and stuff.
 
 Usage
 --------------------------
 ```php
-$compras = COMPRA::model()->findAll();
+$solicitudes = SOLICITUD::model()->findAll($criteria);
 $excel = new YiiPHPExcel;
-return $excel->createExcel($compras, [
-    'TITLECOMPRA',
-    ['USER->NOMBRE' => Yii::t('app', 'Usuario')],
-    'FECHAINICIO',
-    'FECHAFIN',
-    'UNIDAD',
-    'getProductoLabel',
-    'PROVEEDOR->NOMBRE',
-    ['getEstadoLabel' => Yii::t('app', 'Estado')]
+$excel->writeRecordsToExcel($solicitudes, [
+            ['ID_REFERENCIA' => Yii::t('app', 'Referencia')],
+            'NOMBRE_SOLICITUD',
+            ['PERFIL_PUESTO->JOBROLE' => Yii::t('app', 'Jobrole')],
+            'DURACION',
+            'F_INCORPORACION',
+            ['getEstadoLabel' => Yii::t('app', 'Estado')],
+            ['getCountTotalOfertas' => Yii::t('app', 'Total de ofertas')],
+            ['getCountNuevasOfertas' => Yii::t('app', 'Ofertas por ver')],
 ]);
+$excel->sendToBrowser();
 ```
+
+Setting the start row of the data.
+--------------------------
+```php
+$excel = new YiiPHPExcel;
+$excel->getActiveSheet()->setCellValue('A1', 'Other info');
+$excel->getActiveSheet()->setCellValue('A2', 'Other info2');
+
+$excel->setStartRowNumber(4); //start to write into excel from the row #4
+$excel->writeRecordsToExcel($solicitud->OFERTAS, [
+    ['ID_REFERENCIA' => Yii::t('app', 'Referencia oferta')],
+    ['PROVEEDOR->NOMBRE' => Yii::t('app', 'Nombre de proveedor')],
+    ['REF_CANDIDATO' => Yii::t('app', 'Referencia candidato')],
+    'PRECIO_HORA',
+    'INFO_ADICIONAL',
+    ['getEstadoLabel' => Yii::t('app', 'Estado')],
+]);
+$excel->writeRecordsToExcel($solicitud->DUDAS, [
+    ['PROVEEDOR->NOMBRE' => Yii::t('app', 'Nombre de proveedor')],
+    'PREGUNTA',
+    'RESPUESTA',
+    ['getEstadoLabel' => Yii::t('app', 'Estado')],
+    ['getAmbitoLabel' => Yii::t('app', 'Ambito')],
+]);
+$excel->sendToBrowser();
+```
+
