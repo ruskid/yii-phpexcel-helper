@@ -31,8 +31,10 @@ $excel->writeRecordsToExcel($solicitudes, [
 $excel->sendToBrowser();
 ```
 
-Setting the start row of the data. and possibility to separate data in excel by blank line.
+Setting the start row of the data. 
 --------------------------
+Possibility to separate data in excel by blank line or number of rows.
+
 ```php
 $excel = new YiiPHPExcel;
 $excel->getActiveSheet()->setCellValue('A1', 'Other info');
@@ -62,8 +64,10 @@ $excel->sendToBrowser();
 ```
 
 
-You can also set the style for the data.
+Applying styles.
 --------------------------
+You can pass array of styles to the writeRecordsToExcel method. 
+
 ```php
 
 $firstRowStyle = array(
