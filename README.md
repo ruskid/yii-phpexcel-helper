@@ -69,7 +69,7 @@ Applying styles.
 You can pass array of styles to the writeRecordsToExcel method. 
 
 ```php
-
+$excel = new YiiPHPExcel;
 $firstRowStyle = array(
     'font' => array(
         'bold' => true,
