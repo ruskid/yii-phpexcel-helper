@@ -44,7 +44,15 @@ class YiiPHPExcel extends PHPExcel {
     public function getStartRowNumber() {
         return $this->_startRowNumber;
     }
-    
+
+    /**
+     * Will increment the row number, so the next data could be written after the blank row.
+     */
+    public function writeBlankRow() {
+        $rownum = $this->getStartRowNumber();
+        $this->setStartRowNumber(++$rownum);
+    }
+
     /**
      * Will construct PHPExcel. You can specify attributes, methods and relations in array of attributes.
      *
@@ -63,13 +71,15 @@ class YiiPHPExcel extends PHPExcel {
      *
      * @param array $models Array of CActiveRecords
      * @param array $attributes Array of attributes, methods and relations.
+     * @param array $firstRowStyle Array of styles for the first row (header)
+     * @param array $allRowsStyle Array of styles for data rows
      * @return will return file to browser
      */
-    public function writeRecordsToExcel($models, $attributes) {
+    public function writeRecordsToExcel($models, $attributes, $firstRowStyle = ['font' => ['bold' => true]], $allRowsStyle = []) {
         if ($models && $attributes) {
             $letters = $this->getLetters($attributes);
-            $this->setFirstRow($models, $attributes, $letters);
-            $this->setRows($models, $attributes, $letters);
+            $this->setFirstRow($models, $attributes, $letters, $firstRowStyle);
+            $this->setRows($models, $attributes, $letters, $allRowsStyle);
         }
     }
 
@@ -94,23 +104,28 @@ class YiiPHPExcel extends PHPExcel {
      * @param CActiveRecord[] $models
      * @param array $attributes
      * @param array $letters
+     * @param array $style
      */
-    private function setRows($models, $attributes, $letters) {
-        $rownum = $this->getStartRowNumber() + 1; //start from the next row
+    private function setRows($models, $attributes, $letters, $style) {
+        $rownum = $this->getStartRowNumber();
         $counter = 0;
+        if (!is_array($models)) {
+            $models = [$models];
+        }
         foreach ($models as $model) {
             foreach ($attributes as $attribute) {
                 $value = is_array($attribute) ? $this->getDataExcelValue($model, key($attribute)) :
                         $this->getDataExcelValue($model, $attribute);
                 //Write value to row cell
-                $this->getActiveSheet()->setCellValue($letters[$counter] . $rownum, $value);
+                $this->getActiveSheet()->setCellValue($letters[$counter] . $rownum, $value)
+                        ->getStyle($letters[$counter] . $rownum)->applyFromArray($style);
                 $counter++;
             }
             $counter = 0;
             $rownum++;
         }
         //After writing the data into excel, set the next start row number.
-        $this->setStartRowNumber( ++$rownum);
+        $this->setStartRowNumber($rownum);
     }
 
     /**
@@ -149,15 +164,19 @@ class YiiPHPExcel extends PHPExcel {
      * @param CActiveRecord[] $models
      * @param array $attributes
      * @param array $letters
+     * @param array $style
      */
-    private function setFirstRow($models, $attributes, $letters) {
+    private function setFirstRow($models, $attributes, $letters, $style) {
+        $rownum = $this->getStartRowNumber();
         $counter = 0;
         foreach ($attributes as $attribute) {
             $label = is_array($attribute) ? current($attribute) : $models[0]->getAttributeLabel($attribute);
-            $this->getActiveSheet()->setCellValue($letters[$counter] . $this->getStartRowNumber(), $label)
-                    ->getStyle($letters[$counter] . $this->getStartRowNumber())->getFont()->setBold(true);
+            $this->getActiveSheet()->setCellValue($letters[$counter] . $rownum, $label)
+                    ->getStyle($letters[$counter] . $rownum)->applyFromArray($style);
             $counter++;
         }
+        //After writing the data into excel, set the next start row number.
+        $this->setStartRowNumber( ++$rownum);
     }
 
     /**

@@ -31,7 +31,7 @@ $excel->writeRecordsToExcel($solicitudes, [
 $excel->sendToBrowser();
 ```
 
-Setting the start row of the data.
+Setting the start row of the data. and possibility to separate data in excel by blank line.
 --------------------------
 ```php
 $excel = new YiiPHPExcel;
@@ -39,6 +39,7 @@ $excel->getActiveSheet()->setCellValue('A1', 'Other info');
 $excel->getActiveSheet()->setCellValue('A2', 'Other info2');
 
 $excel->setStartRowNumber(4); //start to write into excel from the row #4
+
 $excel->writeRecordsToExcel($solicitud->OFERTAS, [
     ['ID_REFERENCIA' => Yii::t('app', 'Referencia oferta')],
     ['PROVEEDOR->NOMBRE' => Yii::t('app', 'Nombre de proveedor')],
@@ -47,6 +48,9 @@ $excel->writeRecordsToExcel($solicitud->OFERTAS, [
     'INFO_ADICIONAL',
     ['getEstadoLabel' => Yii::t('app', 'Estado')],
 ]);
+
+$excel->writeBlankRow(); // will write blank row which will visually separate OFERTAS AND DUDAS data.
+
 $excel->writeRecordsToExcel($solicitud->DUDAS, [
     ['PROVEEDOR->NOMBRE' => Yii::t('app', 'Nombre de proveedor')],
     'PREGUNTA',
@@ -57,3 +61,34 @@ $excel->writeRecordsToExcel($solicitud->DUDAS, [
 $excel->sendToBrowser();
 ```
 
+
+You can also set the style for the data.
+--------------------------
+```php
+
+$firstRowStyle = array(
+    'font' => array(
+        'bold' => true,
+    ),
+);
+
+$allRowsStyle = array(
+    'font' => array(
+        'name' => 'Arial',
+        'color' => array(
+            'rgb' => '333333'
+        )
+    ),
+);
+$excel->writeRecordsToExcel($compras, [
+    ['TITULO' => Yii::t('app', 'Título Compra')],
+    ['JUSTIFICACION' => Yii::t('app', 'Justificación')],
+    ['DESCRIPCION' => Yii::t('app', 'Descripción')],
+    ['getEstadoLabel' => Yii::t('app', 'Estado')],
+    ['FECHA' => Yii::t('app', 'Fecha')],
+    ['getLoadSolicitudLabel' => Yii::t('app', 'Loa o Solicitud')],
+    ['USER->NOMBRE' => Yii::t('app', 'Usuario')],
+], $firstRowStyle, $allRowsStyle);
+
+$excel->sendToBrowser();
+```
