@@ -183,7 +183,7 @@ class YiiPHPExcel extends PHPExcel {
      * Will send the constructed excel to browser and end yii application
      * @param string $filename
      */
-    public function sendToBrowser($filename = null) {
+    public function sendToBrowser($filename = 'file') {
         // ** Redirect output to a client’s web browser (Excel2007)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
