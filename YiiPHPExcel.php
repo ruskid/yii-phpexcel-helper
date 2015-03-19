@@ -50,7 +50,7 @@ class YiiPHPExcel extends PHPExcel {
      */
     public function writeBlankRow() {
         $rownum = $this->getStartRowNumber();
-        $this->setStartRowNumber( ++$rownum);
+        $this->setStartRowNumber(++$rownum);
     }
 
     /**
@@ -176,7 +176,7 @@ class YiiPHPExcel extends PHPExcel {
             $counter++;
         }
         //After writing the data into excel, set the next start row number.
-        $this->setStartRowNumber(++$rownum);
+        $this->setStartRowNumber( ++$rownum);
     }
 
     /**
@@ -187,7 +187,8 @@ class YiiPHPExcel extends PHPExcel {
         // ** Redirect output to a client’s web browser (Excel2007)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
-        header('Cache-Control: max-age=0');
+        header("Pragma: "); //IE8 quick fix.
+        header("Cache-Control: "); //IE8 quick fix.
 
         $objWriter = PHPExcel_IOFactory::createWriter($this, 'Excel2007');
         $objWriter->save('php://output');
